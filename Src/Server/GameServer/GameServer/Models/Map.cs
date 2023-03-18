@@ -44,20 +44,20 @@ namespace GameServer.Models
         /// <summary>
         /// 刷怪管理器
         /// </summary>
-        SpawnManager SpawnManager = new SpawnManager();
+        //SpawnManager SpawnManager = new SpawnManager();
 
-        public MonsterManager MonsterManager = new MonsterManager();
+        //public MonsterManager MonsterManager = new MonsterManager();
 
         internal Map(MapDefine define)
         {
             this.Define = define;
-            this.SpawnManager.Init(this);
-            this.MonsterManager.Init(this);
+            //this.SpawnManager.Init(this);
+            //this.MonsterManager.Init(this);
         }
 
         internal void Update()
         {
-            SpawnManager.Update();
+            //SpawnManager.Update();
         }
 
         /// <summary>
@@ -78,10 +78,10 @@ namespace GameServer.Models
                 if (kv.Value.character != character)
                     this.AddCharacterEnterMap(kv.Value.connection, character.Info);
             }
-            foreach (var kv in this.MonsterManager.Monsters)
-            {
-                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.Info);
-            }
+            //foreach (var kv in this.MonsterManager.Monsters)
+            //{
+            //    conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.Info);
+            //}
             conn.SendResponse();
         }
 

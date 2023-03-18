@@ -22,19 +22,25 @@ namespace GameServer
         bool running = false;
         public bool Init()
         {
+
             int Port = Properties.Settings.Default.ServerPort;
             network = new NetService();
             network.Init(Port);
             DBService.Instance.Init();
+            var a = DBService.Instance.Entities.NameEntities.Where(s => s.id == "1");
+            Console.WriteLine("{0}", a.FirstOrDefault<NameEntity>().name);
+            //Console.WriteLine("01010");
+
+
             DataManager.Instance.Load();
             MapService.Instance.Init();
             UserService.Instance.Init();
-            ItemService.Instance.Init();
-            QuestService.Instance.Init();
-            FriendService.Instance.Init();
-            TeamService.Instance.Init();
-            GuildService.Instance.Init();
-            ChatService.Instance.Init();
+            //ItemService.Instance.Init();
+            //QuestService.Instance.Init();
+            //FriendService.Instance.Init();
+            //TeamService.Instance.Init();
+            //GuildService.Instance.Init();
+            //ChatService.Instance.Init();
             thread = new Thread(new ThreadStart(this.Update));
 
             return true;

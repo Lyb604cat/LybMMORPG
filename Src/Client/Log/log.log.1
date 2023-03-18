@@ -1,0 +1,21 @@
+2023-03-18 10:02:46,219 [ 1] INFO  Unity: LoadingManager start
+2023-03-18 10:02:49,278 [ 1] INFO  Unity: DataManager > DataManager()
+2023-03-18 10:02:49,396 [ 1] FATAL Unity: <log4net.Error>Exception during StringFormat: Input string was not in a correct format. <format>{0
+{1}</format><args>{FileNotFoundException: Could not find file "E:\MMORPG\mmorpg\Src\Client\Data\NpcDefine.txt"., System.IO.FileStream..ctor (System.String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, Boolean anonymous, FileOptions options) (at /Users/builduser/buildslave/mono/build/mcs/class/corlib/System.IO/FileStream.cs:305)
+System.IO.FileStream..ctor (System.String path, FileMode mode, FileAccess access, FileShare share)
+(wrapper remoting-invoke-with-check) System.IO.FileStream:.ctor (string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)
+System.IO.File.OpenRead (System.String path) (at /Users/builduser/buildslave/mono/build/mcs/class/corlib/System.IO/File.cs:363)
+System.IO.StreamReader..ctor (System.String path, System.Text.Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize) (at /Users/builduser/buildslave/mono/build/mcs/class/corlib/System.IO/StreamReader.cs:167)
+System.IO.StreamReader..ctor (System.String path, System.Text.Encoding encoding)
+(wrapper remoting-invoke-with-check) System.IO.StreamReader:.ctor (string,System.Text.Encoding)
+System.IO.File.ReadAllText (System.String path, System.Text.Encoding encoding) (at /Users/builduser/buildslave/mono/build/mcs/class/corlib/System.IO/File.cs:587)
+System.IO.File.ReadAllText (System.String path) (at /Users/builduser/buildslave/mono/build/mcs/class/corlib/System.IO/File.cs:582)
+DataManager+<LoadData>c__Iterator0.MoveNext () (at Assets/Scripts/Managers/DataManager.cs:88)
+UnityEngine.SetupCoroutine.InvokeMoveNext (IEnumerator enumerator, IntPtr returnValueAddress) (at C:/buildslave/unity/build/Runtime/Export/Coroutines.cs:17)
+}</args></log4net.Error>
+2023-03-18 10:03:04,674 [ 1] INFO  Unity: OnDestroy NetworkManager.
+2023-03-18 10:03:04,675 [ 1] WARN  Unity: CloseConnection(), errorCode: 1007
+UnityEngine.Debug:LogWarning(Object)
+Network.NetClient:CloseConnection(Int32) (at Assets/Scripts/Network/NetClient.cs:176)
+Network.NetClient:OnDestroy() (at Assets/Scripts/Network/NetClient.cs:171)
+
