@@ -1,150 +1,146 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Models;
-using Services;
 using SkillBridge.Message;
+using Models;
+
+
 public class UICharacterSelect : MonoBehaviour {
 
-    public GameObject panelCreate;
-    public GameObject panelSelect;
+	public GameObject panelCreate;
+	public GameObject panelSelect;
 
-    public GameObject btnCreateCancel;
+	public GameObject btnCreateCancel;
 
-    public InputField charName;
-    CharacterClass charClass;
+	public InputField charName;
+	CharacterClass charClass;//角色
 
-    public Transform uiCharList;
-    public GameObject uiCharInfo;
+	public Transform uiCharList;
+	public GameObject uiCharInfo;
 
-    public List<GameObject> uiChars = new List<GameObject>();
+	public List<GameObject> uiChars = new List<GameObject>();
 
-    public Image[] titles;
+	public Image[] imageClassTitle;
+	public Image[] imageSelectClassButton;
+	public Text descs;
 
-    public Text descs;
+	public Sprite[] spriteSelectClassButton;
+	public Sprite[] spriteMarkSelectClassButton;
 
+	private int selectCharacterIdx = -1;
 
-    public Text[] names;
+	public UICharaterView characterView;
 
-    private int selectCharacterIdx = -1;
-
-    public UICharacterView characterView;
-
-    // Use this for initialization
-    void Start()
-    {
-        InitCharacterSelect(true);
-        UserService.Instance.OnCharacterCreate = OnCharacterCreate;
-    }
-
-    public void InitCharacterCreate()
-    {
-        panelCreate.SetActive(true);
-        panelSelect.SetActive(false);
-        OnSelectClass(1);
-    }
-	
-	// Update is called once per frame
-	void Update () {
-		
+	// Use this for initialization
+	void Start () {
+		DataManager.Instance.Load();
+        InitCharacterCreate();
+		//InitCharacterSelect(true);
+		OnSelectClass(0);
 	}
 
-    public void OnClickCreate()
+	public void InitCharacterSelect(bool init)
     {
-        if (string.IsNullOrEmpty(this.charName.text))
-        {
-            MessageBox.Show("请输入角色名称");
-            return;
-        }
-        //SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Click);
-        UserService.Instance.SendCharacterCreate(this.charName.text, this.charClass);
+		panelCreate.SetActive(false);
+		panelSelect.SetActive(true);
+
+  //      if (init)
+  //      {
+		//	foreach(var old in uiChars)
+  //          {
+		//		Destroy(old);
+  //          }
+  //      }
+		//uiChars.Clear();
+
+		//for(int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)
+  //      {
+		//	GameObject go = Instantiate(uiCharInfo, this.uiCharList);
+		//	UICharInfo chrInfo = go.GetComponent<UICharInfo>();
+		//	chrInfo.info = User.Instance.Info.Player.Characters[i];
+
+		//	Button button = go.GetComponent<Button>();
+		//	int idx = i;
+		//	button.onClick.AddListener(() =>
+		//	{
+		//		OnSelectCharacter(idx);
+		//	});
+
+		//	uiChars.Add(go);
+		//	go.SetActive(true);
+  //      }
     }
 
-    /// <summary>
-    /// 选择职业
-    /// </summary>
-    /// <param name="charClass"></param>
-    public void OnSelectClass(int charClass)
+	public void InitCharacterCreate()
     {
-        this.charClass = (CharacterClass)charClass;
-
-        characterView.CurrectCharacter = charClass - 1;
-
-        for (int i = 0; i < 3; i++)
-        {
-            titles[i].gameObject.SetActive(i == charClass - 1);
-            names[i].text = DataManager.Instance.Characters[i + 1].Name;
-        }
-
-        descs.text = DataManager.Instance.Characters[charClass].Description;
-        //SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Click);
+		panelCreate.SetActive(true);
+		panelSelect.SetActive(false);
     }
 
+	// Update is called once per frame
+	void Update()
+	{
 
-    void OnCharacterCreate(Result result, string message)
+	}
+
+	public void OnClickCreate()
     {
-        if (result == Result.Success)
-        {
-            InitCharacterSelect(true);
+		//TODO: Chreate a new character.
+    }
 
+	public void OnSelectClass(int charClass)
+    {
+		this.charClass = (CharacterClass)charClass;
+
+		characterView.CurrentCharacter = charClass ;
+
+		for (int i = 0; i < 3; i++)
+		{
+			imageClassTitle[i].gameObject.SetActive(i == charClass );
+
+			if (i == charClass)
+			{
+				imageSelectClassButton[i].GetComponent<Image>().sprite = spriteMarkSelectClassButton[i];
+			}
+			else
+			{
+				imageSelectClassButton[i].GetComponent<Image>().sprite = spriteSelectClassButton[i];
+			}
+
+			descs.text = DataManager.Instance.Characters[charClass +1].Description;
+		}
+
+	}
+
+	void OnCharacterCreate(Result result, string message)
+    {
+		if(result == Result.Success)
+        {
+			InitCharacterSelect(true);
         }
         else
-            MessageBox.Show(message, "错误", MessageBoxType.Error);
-    }
-
-
-    public void InitCharacterSelect(bool init)
-    {
-        panelCreate.SetActive(false);
-        panelSelect.SetActive(true);
-
-        if (init)
         {
-            foreach (var old in uiChars)
-            {
-                Destroy(old);
-            }
-            uiChars.Clear();
-
-            for (int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)
-            {
-
-                GameObject go = Instantiate(uiCharInfo, this.uiCharList);
-                UICharInfo chrInfo = go.GetComponent<UICharInfo>();
-                chrInfo.info = User.Instance.Info.Player.Characters[i];
-
-                Button button = go.GetComponent<Button>();
-                int idx = i;
-                button.onClick.AddListener(() => {
-                    OnSelectCharacter(idx);
-                });
-
-                uiChars.Add(go);
-                go.SetActive(true);
-            }
+			MessageBox.Show(message,"错误",MessageBoxType.Error);	
         }
     }
 
 
-    public void OnSelectCharacter(int idx)
+	public void OnSelectCharacter(int idx)
+	{
+		this.selectCharacterIdx = idx;
+		var cha = User.Instance.Info.Player.Characters[idx];
+		Debug.LogFormat("select char:[{0} {1} {2}]", cha.Id,cha.Name,cha.Class);
+		User.Instance.CurrentCharacter = cha;
+		characterView.CurrentCharacter = idx;
+	}
+
+	public void OnClickPlay()
     {
-        this.selectCharacterIdx = idx;
-        var cha = User.Instance.Info.Player.Characters[idx];
-        Debug.LogFormat("Select Char:[{0}]{1}[{2}]", cha.Id, cha.Name, cha.Class);
-        characterView.CurrectCharacter = ((int)cha.Class - 1);
-        for (int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)
+		if(selectCharacterIdx >= 0)
         {
-            UICharInfo ci = this.uiChars[i].GetComponent<UICharInfo>();
-            ci.Selected = idx == i;
-        }
-        //SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Click);
-    }
-    public void OnClickPlay()
-    {
-        //SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Click);
-        if (selectCharacterIdx >= 0)
-        {
-            UserService.Instance.SendGameEnter(selectCharacterIdx);
+			MessageBox.Show("进入游戏","进入游戏",MessageBoxType.Confirm);
         }
     }
+
 }

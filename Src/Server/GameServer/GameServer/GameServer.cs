@@ -15,6 +15,9 @@ using GameServer.Services;
 using GameServer.Managers;
 namespace GameServer
 {
+    /// <summary>
+    /// GameServer是主入口
+    /// </summary>
     class GameServer
     {
         NetService network;
@@ -27,11 +30,11 @@ namespace GameServer
             network = new NetService();
             network.Init(Port);
             DBService.Instance.Init();
-            var a = DBService.Instance.Entities.NameEntities.Where(s => s.id == "1");
-            Console.WriteLine("{0}", a.FirstOrDefault<NameEntity>().name);
+            //var a = DBService.Instance.Entities.NameEntities.Where(s => s.id == "1");
+            //Console.WriteLine("{0}", a.FirstOrDefault<NameEntity>().name);
             //Console.WriteLine("01010");
 
-
+            //进行注册
             DataManager.Instance.Load();
             MapService.Instance.Init();
             UserService.Instance.Init();
@@ -48,6 +51,9 @@ namespace GameServer
 
         public void Start()
         {
+            //如果服务内部有线程则需要单独start
+            //UserService.Instance.Init();
+
             network.Start();
             running = true;
             thread.Start();

@@ -18,12 +18,12 @@ namespace Network
         public NEntity Entity { get; set; }
         public IPostResponser PostResponser { get; set; }
 
-        public void Disconnected()
-        {
-            this.PostResponser = null;
-            if (this.Character != null)
-                UserService.Instance.CharacterLeave(this.Character);
-        }
+        //public void Disconnected()
+        //{
+        //    this.PostResponser = null;
+        //    if (this.Character != null)
+        //        UserService.Instance.CharacterLeave(this.Character);
+        //}
 
 
         NetMessage response;
