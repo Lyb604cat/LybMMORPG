@@ -7,7 +7,7 @@ using Network;
 using UnityEngine;
 
 using SkillBridge.Message;
-
+using Common.Data;
 
 namespace Services
 {
@@ -16,6 +16,7 @@ namespace Services
 
         public UnityEngine.Events.UnityAction<Result, string> OnRegister;
         public UnityEngine.Events.UnityAction<Result, string> OnLogin;
+        public UnityEngine.Events.UnityAction<Result, string> OnCreateCharacter;
 
         NetMessage pendingMessage = null;
 
@@ -28,8 +29,9 @@ namespace Services
             NetClient.Instance.OnConnect += OnGameServerConnect;
             NetClient.Instance.OnDisconnect += OnGameServerDisconnect;
             //监听用户注册响应，在服务器注册完成后，服务器向客户端发送的消息
-            MessageDistributer.Instance.Subscribe<UserRegisterResponse>(this.OnUserRegister);
+            MessageDistributer.Instance.Subscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
             MessageDistributer.Instance.Subscribe<UserLoginResponse>(this.OnUserLogin);
+            MessageDistributer.Instance.Subscribe<UserRegisterResponse>(this.OnUserRegister);
 
 
         }
@@ -37,8 +39,9 @@ namespace Services
         public void Dispose()
         {
             //取消用户注册响应监听
-            MessageDistributer.Instance.Unsubscribe<UserRegisterResponse>(this.OnUserRegister);
+            MessageDistributer.Instance.Unsubscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
             MessageDistributer.Instance.Unsubscribe<UserLoginResponse>(this.OnUserLogin);
+            MessageDistributer.Instance.Unsubscribe<UserRegisterResponse>(this.OnUserRegister);
 
             NetClient.Instance.OnConnect -= OnGameServerConnect;
             NetClient.Instance.OnDisconnect -= OnGameServerDisconnect;
@@ -190,6 +193,38 @@ namespace Services
             {
                 Models.User.Instance.SetupUserInfo(response.Userinfo);
             }
+
+            if (this.OnLogin != null)
+            {
+                this.OnLogin(response.Result, response.Errormsg);
+            }
+        }
+
+        public void SendCharacterCreate(string charName, CharacterClass charClass)
+        {
+            Debug.LogFormat("UserCharacterClass:: Name:{0} Class{1}", charName, charClass);
+
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.createChar = new UserCreateCharacterRequest();
+            message.Request.createChar.Name = charName;
+            message.Request.createChar.Class = charClass;
+
+            if (this.connected && NetClient.Instance.Connected)
+            {
+                this.pendingMessage = null;
+                NetClient.Instance.SendMessage(message);
+            }
+            else
+            {
+                this.pendingMessage = message;
+                this.ConnectToServer();
+            }
+        }
+
+        void OnUserCreateCharacter(object sender, UserCreateCharacterResponse response)
+        {
+            Debug.LogFormat("OnUserCreateCharacter: {0} Errormsg:[{1}] ", response.Result, response.Errormsg);
 
             if (this.OnLogin != null)
             {

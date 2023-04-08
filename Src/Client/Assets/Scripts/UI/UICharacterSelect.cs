@@ -4,17 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using SkillBridge.Message;
 using Models;
-
+using Services;
+using Common;
+using Common.Data;
 
 public class UICharacterSelect : MonoBehaviour {
 
 	public GameObject panelCreate;
 	public GameObject panelSelect;
 
-	public GameObject btnCreateCancel;
+	public GameObject btnCreateCharacter;
+	//public GameObject btnCreateCancel;
 
-	public InputField charName;
-	CharacterClass charClass;//角色
 
 	public Transform uiCharList;
 	public GameObject uiCharInfo;
@@ -25,6 +26,8 @@ public class UICharacterSelect : MonoBehaviour {
 	public Image[] imageSelectClassButton;
 	public Text descs;
 
+	public InputField charName;//角色名称
+	private CharacterClass charClass;//角色职业
 	public Sprite[] spriteSelectClassButton;
 	public Sprite[] spriteMarkSelectClassButton;
 
@@ -32,12 +35,23 @@ public class UICharacterSelect : MonoBehaviour {
 
 	public UICharaterView characterView;
 
+
 	// Use this for initialization
 	void Start () {
+		UserService.Instance.Init();
 		DataManager.Instance.Load();
         InitCharacterCreate();
 		//InitCharacterSelect(true);
 		OnSelectClass(0);
+
+		//UserService.Instance.OnCreateCharacter += this.OnCharacterCreate;
+
+		//监听createclass Button
+		btnCreateCharacter.GetComponent<Button>().onClick.AddListener(() =>
+		{
+			OnClickCreate();
+
+        });
 	}
 
 	public void InitCharacterSelect(bool init)
@@ -86,8 +100,15 @@ public class UICharacterSelect : MonoBehaviour {
 
 	public void OnClickCreate()
     {
-		//TODO: Chreate a new character.
-    }
+		//TODO: Chreate a new character.\
+		if (string.IsNullOrEmpty(this.charName.text))
+		{
+			MessageBox.Show("请输入角色名称");
+			return;
+		}
+
+		UserService.Instance.SendCharacterCreate(this.charName.text,this.charClass);
+	}
 
 	public void OnSelectClass(int charClass)
     {

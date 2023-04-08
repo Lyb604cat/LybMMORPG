@@ -1,6 +1,25 @@
-2023-03-29 23:59:29,160 [ 1] INFO  Unity: LoadingManager start
-2023-03-29 23:59:56,925 [ 1] INFO  Unity: OnDestroy NetworkManager.
-2023-03-29 23:59:56,925 [ 1] WARN  Unity: CloseConnection(), errorCode: 1007
+2023-04-03 23:05:31,916 [ 1] INFO  Unity: LoadingManager start
+2023-04-03 23:05:36,943 [ 1] INFO  Unity: DataManager > DataManager()
+2023-04-03 23:05:41,566 [ 1] INFO  Unity: UserLoginRequest::user :1 psw :1
+2023-04-03 23:05:41,567 [ 1] INFO  Unity: ConnectToServer() Start 
+2023-04-03 23:05:41,570 [ 1] INFO  Unity: DoConnect
+2023-04-03 23:05:41,571 [ 1] INFO  Unity: NetClient.DoConnect on 127.0.0.1:8000
+2023-04-03 23:05:41,573 [ 1] INFO  Unity: Connect[0] to server 127.0.0.1:8000
+
+2023-04-03 23:05:41,575 [ 1] INFO  Unity: LoadingMesager::OnGameServerConnect :0 reason:Success
+2023-04-03 23:05:42,383 [ 1] INFO  Unity: OnUserLogin: Success Errormsg:[None] Id:[5] Characters.Count:[0]
+2023-04-03 23:05:42,383 [ 1] INFO  Unity: LoadLevel: CharacterSelect
+2023-04-03 23:05:42,591 [ 1] INFO  Unity: LevelLoadCompleted:1
+2023-04-03 23:05:45,501 [ 1] INFO  Unity: UserCharacterClass:: Name:1 ClassWizard
+2023-04-03 23:05:45,607 [ 1] INFO  Unity: OnUserCreateCharacter: Success Errormsg:[None] 
+2023-04-03 23:05:45,607 [ 1] INFO  Unity: LoadLevel: CharacterSelect
+2023-04-03 23:05:45,650 [ 1] INFO  Unity: LevelLoadCompleted:1
+2023-04-03 23:06:46,070 [ 1] INFO  Unity: UserCharacterClass:: Name:1 ClassWizard
+2023-04-03 23:06:46,112 [ 1] INFO  Unity: OnUserCreateCharacter: Success Errormsg:[None] 
+2023-04-03 23:06:46,113 [ 1] INFO  Unity: LoadLevel: CharacterSelect
+2023-04-03 23:06:46,146 [ 1] INFO  Unity: LevelLoadCompleted:1
+2023-04-03 23:07:50,858 [ 1] INFO  Unity: OnDestroy NetworkManager.
+2023-04-03 23:07:50,864 [ 1] WARN  Unity: CloseConnection(), errorCode: 1007
 UnityEngine.Debug:LogWarning(Object)
 Network.NetClient:CloseConnection(Int32) (at Assets/Scripts/Network/NetClient.cs:176)
 Network.NetClient:OnDestroy() (at Assets/Scripts/Network/NetClient.cs:171)

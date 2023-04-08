@@ -15,12 +15,61 @@ namespace GameServer.Services
         {
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserRegisterRequest>(this.OnRegister);
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserLoginRequest>(this.OnLogin);
+            MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserCreateCharacterRequest>(this.OnCreateCharacter);
         }
 
 
         public void Init()
         {
 
+        }
+
+        void OnLogin(NetConnection<NetSession> sender, UserLoginRequest request)
+        {
+            Log.InfoFormat("UserLoginRequest: User:{0}    Pass:{1}", request.User, request.Passward);
+
+            //NetMessage message = new NetMessage();
+            //message.Response = new NetMessageResponse();
+            //message.Response.userLogin = new UserLoginResponse();
+
+            sender.Session.Response.userLogin = new UserLoginResponse();
+
+
+            TUser user = DBService.Instance.Entities.Users.Where(u => u.Username == request.User).FirstOrDefault();
+
+            if (user == null)
+            {
+                sender.Session.Response.userLogin.Result = Result.Failed;
+                sender.Session.Response.userLogin.Errormsg = "用户不存在";
+            }
+            else if (user.Password != request.Passward)
+            {
+                sender.Session.Response.userLogin.Result = Result.Failed;
+                sender.Session.Response.userLogin.Errormsg = "密码错误";
+            }
+            else
+            {
+                sender.Session.User = user;
+
+                sender.Session.Response.userLogin.Result = Result.Success;
+                sender.Session.Response.userLogin.Errormsg = "None";
+                sender.Session.Response.userLogin.Userinfo = new NUserInfo();
+                sender.Session.Response.userLogin.Userinfo.Id = (int)user.ID;
+                sender.Session.Response.userLogin.Userinfo.Player = new NPlayerInfo();
+                sender.Session.Response.userLogin.Userinfo.Player.Id = user.Player.ID;
+                //遍历角色
+                foreach (var c in user.Player.Characters)
+                {
+                    NCharacterInfo info = new NCharacterInfo();
+                    info.Id = c.ID;
+                    info.Name = c.Name;
+                    info.Type = CharacterType.Player;
+                    info.Class = (CharacterClass)c.Class;
+                    info.ConfigId = c.ID;
+                    sender.Session.Response.userLogin.Userinfo.Player.Characters.Add(info);
+                }
+            }
+            sender.SendResponse();
         }
 
         void OnRegister(NetConnection<NetSession> conn, UserRegisterRequest request)
@@ -47,52 +96,74 @@ namespace GameServer.Services
             conn.SendResponse();
         }
 
-        void OnLogin(NetConnection<NetSession> sender, UserLoginRequest request)
+
+        /// <summary>
+        /// 创建角色控制器逻辑实现
+        /// </summary>
+        /// <param name="sender">发送到客户端的信息</param>
+        /// <param name="request">接收的客户端信息</param>
+        void OnCreateCharacter(NetConnection<NetSession> sender, UserCreateCharacterRequest request)
         {
-            Log.InfoFormat("UserLoginRequest: User:{0}    Pass:{1}",request.User,request.Passward);
+            //日志打印，接收的信息内容
+            Log.InfoFormat("UserCreateCharacterRequest: Name:{0}    Class:{1}", request.Name, request.Class);
 
-            //NetMessage message = new NetMessage();
-            //message.Response = new NetMessageResponse();
-            //message.Response.userLogin = new UserLoginResponse();
-
-            sender.Session.Response.userLogin = new UserLoginResponse();
+            //进行逻辑判断，如果需要判断角色是否重名可在此读表判断
 
 
-            TUser user = DBService.Instance.Entities.Users.Where(u => u.Username == request.User).FirstOrDefault();
-
-            if(user == null)
+            //初始化一个角色类
+            TCharacter character = new TCharacter()
             {
-                sender.Session.Response.userLogin.Result = Result.Failed;
-                sender.Session.Response.userLogin.Errormsg = "用户不存在";
-            }
-            else if(user.Password != request.Passward)
-            {
-                sender.Session.Response.userLogin.Result = Result.Failed;
-                sender.Session.Response.userLogin.Errormsg = "密码错误";
-            }
-            else
-            {
-                sender.Session.User = user;
+                Name = request.Name,
+                Class = (int)request.Class,
+                TID = (int)request.Class,
+                Level = 1,
+                MapID = 1,
+                MapPosX = 5000, //初始出生位置X
+                MapPosY = 4000, //初始出生位置Y
+                MapPosZ = 820,
+                Gold = 100000, //初始10万金币
+                Equips = new byte[28]
+            };
+            var bag = new TCharacterBag();//初始化一个角色背包
+            bag.Owner = character;
+            bag.Items = new byte[0];
+            bag.Unlocked = 20;
+            character.Bag = DBService.Instance.Entities.CharacterBags.Add(bag);
 
-                sender.Session.Response.userLogin.Result = Result.Success;
-                sender.Session.Response.userLogin.Errormsg = "None";
-                sender.Session.Response.userLogin.Userinfo = new NUserInfo();
-                sender.Session.Response.userLogin.Userinfo.Id = 1;
-                sender.Session.Response.userLogin.Userinfo.Player = new NPlayerInfo();
-                sender.Session.Response.userLogin.Userinfo.Player.Id = user.Player.ID;
-                //遍历角色
-                foreach(var c in user.Player.Characters)
-                {
-                    NCharacterInfo info = new NCharacterInfo();
-                    info.Id = c.ID;
-                    info.Name = c.Name;
-                    info.Class = (CharacterClass)c.Class;
-                    sender.Session.Response.userLogin.Userinfo.Player.Characters.Add(info);
-                }
+            character = DBService.Instance.Entities.Characters.Add(character);
+            character.Items.Add(new TCharacterItem()
+            {
+                Owner = character,
+                ItemID = 1,
+                ItemCount = 20,
+            });
+            character.Items.Add(new TCharacterItem()
+            {
+                Owner = character,
+                ItemID = 2,
+                ItemCount = 20,
+            });
+            sender.Session.User.Player.Characters.Add(character);
+
+            DBService.Instance.Entities.SaveChanges();
+
+            sender.Session.Response.createChar = new UserCreateCharacterResponse();
+            sender.Session.Response.createChar.Result = Result.Success;
+            sender.Session.Response.createChar.Errormsg = "None";
+
+            //遍历当前角色
+            foreach (var c in sender.Session.User.Player.Characters)
+            {
+                NCharacterInfo info = new NCharacterInfo();
+                info.Id = c.ID;
+                info.Name = c.Name;
+                info.Type = CharacterType.Player;
+                info.Class = (CharacterClass)c.Class;
+                info.ConfigId = c.TID;
+                sender.Session.Response.createChar.Characters.Add(info);
             }
             sender.SendResponse();
         }
-
 
     }
 }
