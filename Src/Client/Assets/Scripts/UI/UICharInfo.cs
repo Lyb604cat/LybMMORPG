@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using SkillBridge.Message;
 
 public class UICharInfo : MonoBehaviour {
 
 
-    public SkillBridge.Message.NCharacterInfo info;
+    public NCharacterInfo info;
 
     public Text charClass;
     public Text charName;
@@ -25,7 +26,21 @@ public class UICharInfo : MonoBehaviour {
     void Start () {
 		if(info!=null)
         {
-            this.charClass.text = this.info.Class.ToString();
+            switch (this.info.Class+1)
+            {
+                case CharacterClass.Warrior:
+                    this.charClass.text = this.info.Level+ " 战士";
+                    break;
+
+                case CharacterClass.Archer:
+                    this.charClass.text = this.info.Level + " 弓箭手";
+                    break;
+
+                case CharacterClass.Wizard:
+                    this.charClass.text = this.info.Level + " 魔法师";
+                    break;
+            }
+            //this.charClass.text = this.info.Class.ToString();
             this.charName.text = this.info.Name;
         }
 	}

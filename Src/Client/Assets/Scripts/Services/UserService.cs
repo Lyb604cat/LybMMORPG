@@ -226,6 +226,11 @@ namespace Services
         {
             Debug.LogFormat("OnUserCreateCharacter: {0} Errormsg:[{1}] ", response.Result, response.Errormsg);
 
+            if(response.Result == Result.Success)
+            {
+                Models.User.Instance.Info.Player.Characters.Clear();
+                Models.User.Instance.Info.Player.Characters.AddRange(response.Characters);
+            }
             if (this.OnLogin != null)
             {
                 this.OnLogin(response.Result, response.Errormsg);

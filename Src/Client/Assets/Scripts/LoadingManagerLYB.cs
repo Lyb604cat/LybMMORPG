@@ -35,12 +35,12 @@ public class LoadingManagerLYB : MonoBehaviour
         UITips.SetActive(false);
         UILoading.SetActive(false);
         UILogin.SetActive(false);
-        yield return new WaitForSeconds(2f);
+        //yield return new WaitForSeconds(2f);
         //健康游戏提示
         UIStart.SetActive(false);
         UITips.SetActive(true);
 
-        yield return new WaitForSeconds(2f);
+        //yield return new WaitForSeconds(2f);
         //资源加载界面
         UILoading.SetActive(true);
         yield return new WaitForSeconds(1f);
@@ -54,13 +54,13 @@ public class LoadingManagerLYB : MonoBehaviour
 
 
         // Fake Loading Simulate
-        for (float i = 0; i < 100;)
-        {
-            i += UnityEngine.Random.Range(0.1f, 0.5f);
-            progressBar.value = i;
-            progressNumber.text = Convert.ToInt32(i).ToString() + "%";
-            yield return new WaitForEndOfFrame();
-        }
+        //for (float i = 0; i < 100;)
+        //{
+        //    i += UnityEngine.Random.Range(0.1f, 0.5f);
+        //    progressBar.value = i;
+        //    progressNumber.text = Convert.ToInt32(i).ToString() + "%";
+        //    yield return new WaitForEndOfFrame();
+        //}
 
         UILoading.SetActive(false);
         UILogin.SetActive(true);

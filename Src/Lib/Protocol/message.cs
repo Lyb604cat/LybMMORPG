@@ -1531,12 +1531,12 @@ namespace SkillBridge.Message
     {
         [global::ProtoBuf.ProtoEnum(Name = @"NONE")]
         None = 0,
-        [global::ProtoBuf.ProtoEnum(Name = @"WARRIOR")]
-        Warrior = 1,
-        [global::ProtoBuf.ProtoEnum(Name = @"WIZARD")]
-        Wizard = 2,
         [global::ProtoBuf.ProtoEnum(Name = @"ARCHER")]
-        Archer = 3,
+        Archer = 1,
+        [global::ProtoBuf.ProtoEnum(Name = @"WARRIOR")]
+        Warrior = 2,
+        [global::ProtoBuf.ProtoEnum(Name = @"WIZARD")]
+        Wizard = 3,
     }
 
     [global::ProtoBuf.ProtoContract(Name = @"CHARACTER_STATE")]
