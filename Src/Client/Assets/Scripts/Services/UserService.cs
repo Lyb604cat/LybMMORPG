@@ -8,6 +8,7 @@ using UnityEngine;
 
 using SkillBridge.Message;
 using Common.Data;
+using Models;
 
 namespace Services
 {
@@ -17,6 +18,7 @@ namespace Services
         public UnityEngine.Events.UnityAction<Result, string> OnRegister;
         public UnityEngine.Events.UnityAction<Result, string> OnLogin;
         public UnityEngine.Events.UnityAction<Result, string> OnCreateCharacter;
+        //public UnityEngine.Events.UnityAction<Result, string> OnGameEnter;
 
         NetMessage pendingMessage = null;
 
@@ -26,12 +28,17 @@ namespace Services
 
         public UserService()
         {
+            //链接服务器
             NetClient.Instance.OnConnect += OnGameServerConnect;
             NetClient.Instance.OnDisconnect += OnGameServerDisconnect;
+
+
             //监听用户注册响应，在服务器注册完成后，服务器向客户端发送的消息
             MessageDistributer.Instance.Subscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
             MessageDistributer.Instance.Subscribe<UserLoginResponse>(this.OnUserLogin);
             MessageDistributer.Instance.Subscribe<UserRegisterResponse>(this.OnUserRegister);
+            MessageDistributer.Instance.Subscribe<UserGameEnterResponse>(this.OnGameEnter);
+            MessageDistributer.Instance.Subscribe<MapCharacterEnterResponse>(this.OnCharacterEnter);
 
 
         }
@@ -42,7 +49,9 @@ namespace Services
             MessageDistributer.Instance.Unsubscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
             MessageDistributer.Instance.Unsubscribe<UserLoginResponse>(this.OnUserLogin);
             MessageDistributer.Instance.Unsubscribe<UserRegisterResponse>(this.OnUserRegister);
+            MessageDistributer.Instance.Unsubscribe<UserGameEnterResponse>(this.OnGameEnter);
 
+            //断开服务器
             NetClient.Instance.OnConnect -= OnGameServerConnect;
             NetClient.Instance.OnDisconnect -= OnGameServerDisconnect;
         }
@@ -236,5 +245,40 @@ namespace Services
                 this.OnLogin(response.Result, response.Errormsg);
             }
         }
+
+        public void SendGameEnter(int characterIdx)
+        {
+            Debug.LogFormat("UserGameEnter:: CharacterId:{0}", characterIdx);
+
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.gameEnter = new UserGameEnterRequest();
+            message.Request.gameEnter.characterIdx = characterIdx;
+            NetClient.Instance.SendMessage(message);
+        }
+
+        private void OnGameEnter(object sender, UserGameEnterResponse response)
+        {
+            Debug.LogFormat("UserGameEnterResponse: {0} Errormsg:[{1}]  ", response.Result, response.Errormsg);
+
+            if(response.Result == Result.Success)
+            {
+
+            }
+
+        }
+
+
+
+        private void OnCharacterEnter(object sender, MapCharacterEnterResponse response)
+        {
+            Debug.LogFormat("MapCharacterEnterResponse::  mapId: {0} ", response.mapId);
+            NCharacterInfo info = response.Characters[0];
+            User.Instance.CurrentCharacter = info;
+            SceneManager.Instance.LoadScene(DataManager.Instance.Maps[response.mapId].Resource);
+            
+
+        }
+
     }
 }

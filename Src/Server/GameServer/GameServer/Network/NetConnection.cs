@@ -117,7 +117,7 @@ namespace Network
         /// <param name="data">The data to send.</param>
         /// <param name="offset">The offset into the data.</param>
         /// <param name="count">The ammount of data to send.</param>
-        private void SendData(Byte[] data, Int32 offset, Int32 count)
+        internal void SendData(Byte[] data, Int32 offset, Int32 count)
         {
             lock (this)
             {

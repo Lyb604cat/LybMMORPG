@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common;
+using GameServer.Entities;
+using GameServer.Managers;
 using Network;
 using SkillBridge.Message;
 
@@ -16,6 +18,7 @@ namespace GameServer.Services
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserRegisterRequest>(this.OnRegister);
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserLoginRequest>(this.OnLogin);
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserCreateCharacterRequest>(this.OnCreateCharacter);
+            MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserGameEnterRequest>(this.OnEnterGame);
         }
 
 
@@ -163,6 +166,26 @@ namespace GameServer.Services
                 sender.Session.Response.createChar.Characters.Add(info);
             }
             sender.SendResponse();
+        }
+
+        void OnEnterGame(NetConnection<NetSession> sender, UserGameEnterRequest request)
+        {
+            TCharacter dbchar = sender.Session.User.Player.Characters.ElementAt(request.characterIdx);
+            Log.InfoFormat("UserGameEnterRequest: characterIdx:{0}  Name:{1}  Map{2}", request.characterIdx, dbchar.Name, dbchar.MapID);
+
+            Character chatacter = CharacterManager.Instance.AddCharacter(dbchar);
+
+            NetMessage message = new NetMessage();
+            message.Response = new NetMessageResponse();
+            message.Response.gameEnter = new UserGameEnterResponse();
+            message.Response.gameEnter.Result = Result.Success;
+            message.Response.gameEnter.Errormsg = "None";
+
+            byte[] data = PackageHandler.PackMessage(message);
+            sender.SendData(data, 0, data.Length);
+            sender.Session.Character = chatacter;
+            MapManager.Instance[dbchar.MapID].CharacterEnter(sender, chatacter);
+
         }
 
     }
