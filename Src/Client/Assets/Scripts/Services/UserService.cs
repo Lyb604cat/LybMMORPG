@@ -200,7 +200,7 @@ namespace Services
 
             if (response.Result == Result.Success)
             {
-                Models.User.Instance.SetupUserInfo(response.Userinfo);
+                User.Instance.SetupUserInfo(response.Userinfo);
             }
 
             if (this.OnLogin != null)
@@ -263,19 +263,27 @@ namespace Services
 
             if(response.Result == Result.Success)
             {
-
+                if(response.Character!=null)
+                {
+                    User.Instance.CurrentCharacter = response.Character;
+                    //ItemManager.Instance.Init(response.Character.Items);
+                    //BagManager.Instance.Init(response.Character.Bag);
+                    //EquipManager.Instance.Init(response.Character.Equips);
+                    //QuestManager.Instance.Init(response.Character.Quests);
+                    //FriendManager.Instance.Init(response.Character.Friends);
+                    //GuildManager.Instance.Init(response.Character.Guild);
+                }
             }
-
         }
 
 
 
         private void OnCharacterEnter(object sender, MapCharacterEnterResponse response)
         {
-            Debug.LogFormat("MapCharacterEnterResponse::  mapId: {0} ", response.mapId);
-            NCharacterInfo info = response.Characters[0];
-            User.Instance.CurrentCharacter = info;
-            SceneManager.Instance.LoadScene(DataManager.Instance.Maps[response.mapId].Resource);
+            //Debug.LogFormat("MapCharacterEnterResponse::  mapId: {0} ", response.mapId);
+            //NCharacterInfo info = response.Characters[0];
+            //User.Instance.CurrentCharacter = info;
+            //SceneManager.Instance.LoadScene(DataManager.Instance.Maps[response.mapId].Resource);
             
 
         }

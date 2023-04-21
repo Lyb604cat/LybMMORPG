@@ -11,21 +11,21 @@ namespace Models
 {
     class User : Singleton<User>
     {
-        SkillBridge.Message.NUserInfo userInfo;
+        NUserInfo userInfo;
 
 
-        public SkillBridge.Message.NUserInfo Info
+        public NUserInfo Info
         {
             get { return userInfo; }
         }
 
 
-        public void SetupUserInfo(SkillBridge.Message.NUserInfo info)
+        public void SetupUserInfo(NUserInfo info)
         {
             this.userInfo = info;
         }
 
-        public SkillBridge.Message.NCharacterInfo CurrentCharacter { get; set; }
+        public NCharacterInfo CurrentCharacter { get; set; }
 
     }
 }

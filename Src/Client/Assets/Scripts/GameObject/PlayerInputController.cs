@@ -30,7 +30,7 @@ public class PlayerInputController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        state = SkillBridge.Message.CharacterState.Idle;
+        state = CharacterState.Idle;
         if (this.character == null)
         {
             DataManager.Instance.Load();
@@ -50,26 +50,26 @@ public class PlayerInputController : MonoBehaviour
         float v = Input.GetAxis("Vertical");
         if(v > 0.01)
         {
-            if(state != SkillBridge.Message.CharacterState.Move)
+            if(state != CharacterState.Move)
             {
-                state = SkillBridge.Message.CharacterState.Move;
+                state = CharacterState.Move;
                 this.character.MoveForward();
                 this.SendEntityEvent(EntityEvent.MoveFwd);
             }
             this.rb.velocity = this.rb.velocity.y * Vector3.up + GameObjectTool.LogicToWorld(character.direction) * (this.character.speed + 9.18f) / 100f;
         }else if (v < -0.01)
         {
-            if (state != SkillBridge.Message.CharacterState.Move)
+            if (state != CharacterState.Move)
             {
-                state = SkillBridge.Message.CharacterState.Move;
-                this.character.MoveForward();
-                this.SendEntityEvent(EntityEvent.MoveFwd);
+                state = CharacterState.Move;
+                this.character.MoveBack();
+                this.SendEntityEvent(EntityEvent.MoveBack);
             }
             this.rb.velocity = this.rb.velocity.y * Vector3.up + GameObjectTool.LogicToWorld(character.direction) * (this.character.speed + 9.18f) / 100f;
         }
         else
         {
-            if(state != SkillBridge.Message.CharacterState.Idle)
+            if(state != CharacterState.Idle)
             {
                 state = CharacterState.Idle;
                 this.rb.velocity = Vector3.zero;

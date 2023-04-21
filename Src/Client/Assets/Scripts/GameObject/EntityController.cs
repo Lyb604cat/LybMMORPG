@@ -64,10 +64,17 @@ public class EntityController : MonoBehaviour
         switch (entityEvent)
         {
             case EntityEvent.Idle:
-
+                anim.SetBool("Move", false);
+                anim.SetTrigger("Idle");
                 break;
-            case EntityEvent.None:
-
+            case EntityEvent.MoveFwd:
+                anim.SetBool("Move", true);
+                break;
+            case EntityEvent.MoveBack:
+                anim.SetBool("Move", true);
+                break;
+            case EntityEvent.Jump:
+                anim.SetTrigger("Jump");
                 break;
         }
     }

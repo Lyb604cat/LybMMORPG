@@ -47,12 +47,13 @@ namespace Services
             {
                 if(User.Instance.CurrentCharacter.Id == character.Id)
                 {
-                    //当前角色切换地图
+                    //刷新当前角色
                     User.Instance.CurrentCharacter = character;
                 }
                 //将角色加载到角色管理器中
                 CharacterManager.Instance.AddCharacter(character);
             }
+            Debug.LogFormat("角色管理器中角色个数：{0}", CharacterManager.Instance.Characters.Count);
             //加载地图
             if(CurrentMapId != response.mapId)
             {

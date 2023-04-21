@@ -48,6 +48,7 @@ public class LoadingManagerLYB : MonoBehaviour
 
         yield return DataManager.Instance.LoadData();
 
+        MapService.Instance.Init();
         UserService.Instance.Init();
 
         //yield return DataManager.Instance.LoadData();
